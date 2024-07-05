@@ -1,6 +1,24 @@
-﻿<Router AppAssembly="@typeof(Program).Assembly">
+﻿@using Microsoft.AspNetCore.Components.Routing
+@inject NavigationManager Navigation
+
+<Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
+        <RouteView RouteData="@routeData" DefaultLayout="@DetermineLayout(routeData)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
+    <NotFound>
+        <p>Sorry, there's nothing at this address.</p>
+    </NotFound>
 </Router>
+
+@code {
+    private Type DetermineLayout(RouteData routeData)
+    {
+        var uri = Navigation.ToBaseRelativePath(Navigation.Uri).ToLower();
+        if (uri.StartsWith("admin"))
+        {
+            return typeof(Layout.MainLayout);
+        }
+        return typeof(Layout.PublicLayout); // Change this to your default layout
+    }
+}

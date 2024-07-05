@@ -9,17 +9,8 @@
   
   
   <ItemGroup>
-    <ProjectReference Include="..\..\tradepro.InfraModel\tradepro.InfraModel.csproj" />
-    <ProjectReference Include="..\..\tradepro.Logic\tradepro.Logic.csproj" />
     <ProjectReference Include="..\tradepro.Client\tradepro.Client.csproj" />
-    <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="2.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.*" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.6" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.6.2" />
   </ItemGroup>
 
 </Project>

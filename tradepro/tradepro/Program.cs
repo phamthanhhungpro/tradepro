@@ -1,11 +1,7 @@
-using Microsoft.AspNetCore.Identity;
 using MudBlazor.Services;
 using tradepro.Client.Pages;
+using tradepro.Client.Pages.Public;
 using tradepro.Components;
-using tradepro.InfraModel.DataAccess;
-using Microsoft.EntityFrameworkCore;
-using tradepro.Logic.Interfaces;
-using tradepro.Logic.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
