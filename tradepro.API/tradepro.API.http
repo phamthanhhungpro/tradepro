@@ -1,0 +1,6 @@
+@tradepro.API_HostAddress = http://localhost:5045
+
+GET {{tradepro.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
