@@ -7,5 +7,6 @@ namespace tradepro.Logic.Interfaces
     {
         void CreateRole(RoleRequest roleRequest);
         Task<IEnumerable<Role>> GetRoles();
+        Task<Role> GetRoleById(Guid Id);
     }
 }

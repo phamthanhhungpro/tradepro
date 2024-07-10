@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace tradepro.Logic.Request
 {
-    public class LoginRequest
+    public class LoginModel
     {
         public string UserNameOrPhone { get; set; }
         public string Password { get; set; }
