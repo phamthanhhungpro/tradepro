@@ -27,6 +27,11 @@ namespace tradepro.Logic.Services
 
         }
 
+        public async Task<Role> GetRoleById(Guid Id)
+        {
+            return await _context.Roles.FirstAsync(x => x.Id == Id);
+        }
+
         public async  Task<IEnumerable<Role>> GetRoles()
         {
              return await  _context.Roles.ToListAsync();

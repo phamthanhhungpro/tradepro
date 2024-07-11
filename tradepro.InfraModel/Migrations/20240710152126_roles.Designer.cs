@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using tradepro.InfraModel.DataAccess;
@@ -11,9 +12,11 @@ using tradepro.InfraModel.DataAccess;
 namespace tradepro.InfraModel.Migrations
 {
     [DbContext(typeof(TradeproDbContext))]
-    partial class TradeproDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240710152126_roles")]
+    partial class roles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -321,10 +324,15 @@ namespace tradepro.InfraModel.Migrations
             modelBuilder.Entity("tradepro.InfraModel.DataAccess.User", b =>
                 {
                     b.HasOne("tradepro.InfraModel.DataAccess.Role", "Role")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("tradepro.InfraModel.DataAccess.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

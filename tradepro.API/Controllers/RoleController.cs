@@ -27,5 +27,11 @@ namespace tradepro.API.Controllers
         {
             _roleService.CreateRole(roleRequest);
         }
+        [HttpGet("/get-role-by-id")]
+        public async Task<Role> GetRoleById(Guid id)
+        {
+
+            return await _roleService.GetRoleById(id);
+        }
     }
 }
