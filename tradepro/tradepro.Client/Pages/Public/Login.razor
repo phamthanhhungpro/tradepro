@@ -4,6 +4,7 @@
 @using tradepro.Logic.Request
 @inject NavigationManager Navigation
 @inject IRestClient RestClient
+@rendermode InteractiveServer
 
 <MudContainer MaxWidth="MaxWidth.Small">
     <MudPaper Class="pa-4">
@@ -11,7 +12,7 @@
         <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
             <MudTextField @bind-Value="loginModel.Email" Label="Email" Required="true" />
             <MudTextField @bind-Value="loginModel.Password" Label="Password" InputType="InputType.Password" Required="true" />
-            <MudButton Type="Submit" Variant="Variant.Filled" Color="Color.Primary" Class="mt-2">Login</MudButton>
+            <MudButton Type="Button" OnClick="@((e) => HandleLogin())" Variant="Variant.Filled" Color="Color.Primary" Class="mt-2">Login</MudButton>
         </EditForm>
         @if (!string.IsNullOrEmpty(errorMessage))
         {
@@ -26,17 +27,29 @@
 
     private async Task HandleLogin()
     {
-        Console.WriteLine("Login");
         try
         {
+            Console.WriteLine("HandleLogin called");
             var response = await RestClient.LoginAsync(loginModel);
-            // Handle successful login, e.g., save the token, navigate to another page
-            Navigation.NavigateTo("/");
-        }
 
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                // Parse the response then save credentail to localstore
+
+                Console.WriteLine("Login successful: " + responseBody);
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = "Invalid login attempt.";
+                Console.WriteLine("Login failed: " + response.ReasonPhrase);
+            }
+        }
         catch (Exception ex)
         {
-            errorMessage = $"Có lỗi xảy ra, vui lòng thử lại !";
+            errorMessage = $"An error occurred: {ex.Message}";
+            Console.WriteLine("An error occurred: " + ex.Message);
         }
     }
 }
