@@ -2,6 +2,8 @@ using MudBlazor.Services;
 using tradepro.Client.Pages;
 using tradepro.Client.Pages.Public;
 using tradepro.Components;
+using RestEase.HttpClientFactory;
+using tradepro.Client.RestClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+var baseAddress = builder.Configuration.GetValue<string>("ApiUrl");
+builder.Services.AddRestEaseClient<IRestClient>(baseAddress);
 
 builder.Services.AddMudServices();
 

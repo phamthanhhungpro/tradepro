@@ -9,8 +9,16 @@
   
   
   <ItemGroup>
-    <ProjectReference Include="..\tradepro.Client\tradepro.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.*" />
+  </ItemGroup>
+
+  
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\tradepro.API\tradepro.API.csproj" />
+    <ProjectReference Include="..\..\tradepro.InfraModel\tradepro.InfraModel.csproj" />
+    <ProjectReference Include="..\..\tradepro.Logic\tradepro.Logic.csproj" />
+    <ProjectReference Include="..\tradepro.Client\tradepro.Client.csproj" />
   </ItemGroup>
 
 </Project>

@@ -16,11 +16,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-//DI
+// DI
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
 
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -44,11 +42,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGroup("/api/auth")
-          .MapCustomizedIdentityApi<User>();
 app.UseHttpsRedirection();
 
+app.UseAuthentication(); // Ensure this is before UseAuthorization
 app.UseAuthorization();
+
+app.MapGroup("/api/auth")
+          .MapCustomizedIdentityApi<User>();
 
 app.MapControllers();
 

@@ -93,45 +93,24 @@ namespace tradepro.API.Controllers
 
                 return TypedResults.Ok();
             });
-            routeGroup.MapPost("/login", async Task<LoginResponse>
-                ([FromBody] LoginModel login, [FromServices] IServiceProvider sp) =>
+
+            routeGroup.MapPost("/login", async Task<Results<Ok<AccessTokenResponse>, EmptyHttpResult, ProblemHttpResult>>
+            ([FromBody] LoginModel login, [FromServices] IServiceProvider sp) =>
             {
                 var signInManager = sp.GetRequiredService<SignInManager<TUser>>();
+
                 signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
 
-                var result = await signInManager.PasswordSignInAsync(login.UserNameOrPhone, login.Password, true, lockoutOnFailure: true);
+                var result = await signInManager.PasswordSignInAsync(login.Email, login.Password, true, lockoutOnFailure: true);
+
+
                 if (!result.Succeeded)
                 {
-                    throw new Exception("sai pass");
+                    return TypedResults.Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);
                 }
-                var rs = new LoginResponse();
-                using (var scope = endpoints.ServiceProvider.CreateScope())
-                {
-                    var getRole = scope.ServiceProvider.GetRequiredService<IRoleService>();
-                    var getUser = scope.ServiceProvider.GetRequiredService<IUserService>();
-
-                    rs.Email = login.UserNameOrPhone;
-                    //rs.Role = getRole.GetRoleById(getUser.GetUserByEmail(login.UserNameOrPhone).Result.Role.Id).Result.Name;
-                    //rs.UserId = getUser.GetUserByEmail(login.UserNameOrPhone).Result.Id;
-                    rs.Token = result.ToString();
-                }
-
-                //if (result.RequiresTwoFactor)
-                //{
-                //    if (!string.IsNullOrEmpty(login.TwoFactorCode))
-                //    {
-                //        result = await signInManager.TwoFactorAuthenticatorSignInAsync(login.TwoFactorCode, isPersistent, rememberClient: isPersistent);
-                //    }
-                //    else if (!string.IsNullOrEmpty(login.TwoFactorRecoveryCode))
-                //    {
-                //        result = await signInManager.TwoFactorRecoveryCodeSignInAsync(login.TwoFactorRecoveryCode);
-                //    }
-                //}
-
-                return rs;
-
 
                 // The signInManager already produced the needed response in the form of a cookie or bearer token.
+                return TypedResults.Empty;
             });
 
             routeGroup.MapPost("/refresh", async Task<Results<Ok<AccessTokenResponse>, UnauthorizedHttpResult, SignInHttpResult, ChallengeHttpResult>>

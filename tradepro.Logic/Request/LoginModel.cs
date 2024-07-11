@@ -8,7 +8,7 @@ namespace tradepro.Logic.Request
 {
     public class LoginModel
     {
-        public string UserNameOrPhone { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }
