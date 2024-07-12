@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using tradepro.InfraModel.DataAccess;
+using tradepro.Logic.DTOs;
 using tradepro.Logic.Interfaces;
 using tradepro.Logic.Request;
 
@@ -12,7 +13,7 @@ namespace tradepro.API.Controllers
     {
 
         private readonly IRoleService _roleService;
-        public RoleController(TradeproDbContext context, IRoleService roleService ) 
+        public RoleController( IRoleService roleService ) 
         { 
             _roleService = roleService;
         }
@@ -33,5 +34,11 @@ namespace tradepro.API.Controllers
 
             return await _roleService.GetRoleById(id);
         }
+        [HttpGet("/filter-role")]
+        public async Task<IEnumerable<RoleSelectList>> FilterRole()
+        {
+            return await _roleService.FilterRole();
+        }
+
     }
 }

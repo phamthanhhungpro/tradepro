@@ -12,7 +12,7 @@ namespace tradepro.Logic.Interfaces
     public interface IUserService
     {
        void CreateUser(UserRequest userRequest);
-        Task<List<User>> ListUser();
+        Task<List<UserInfoDto>> ListUser( );
         Task<User> GetUserByEmail(string email);
         Task<CudResponseDto> UpdateUser(Guid Id,UpdateUserRequest user);
         Task<CudResponseDto> ChangePassword(Guid Id, ChangpasswordRequest  changpasswordRequest);

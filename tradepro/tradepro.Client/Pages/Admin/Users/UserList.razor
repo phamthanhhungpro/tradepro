@@ -1,8 +1,48 @@
 ﻿@page "/admin/users"
-
+@using MudBlazor
+@using System.Net.Http.Json
+@using Newtonsoft.Json
+@using tradepro.Client.RestClient
+@using tradepro.Logic.DTOs
+@using tradepro.Logic.Request
+@inject NavigationManager Navigation
+@inject IRestClient RestClient
+@rendermode InteractiveServer
 <PageTitle>Danh sách người dùng</PageTitle>
 <h3>UserList</h3>
+<MudTable Items="@listUser"  Hover="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Address</MudTh>
+        <MudTh>Phone Number</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Role</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Name</MudTd>
+        <MudTd DataLabel="Sign">@context.Address</MudTd>
+        <MudTd DataLabel="Name">@context.Phone</MudTd>
+        <MudTd DataLabel="Position">@context.Email</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Role</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+ 
+</MudTable>
 
 @code {
-
+    private string searchString1 = "";
+    private PagingRequest pagingRequest = new PagingRequest();
+    private List<UserInfoDto> listUser = new List<UserInfoDto>();
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await RestClient.GetListUser();
+        listUser = JsonConvert.DeserializeObject<List<UserInfoDto>>(await response.Content.ReadAsStringAsync());
+    }
 }

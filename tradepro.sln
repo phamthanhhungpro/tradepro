@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tradepro.InfraModel", "trad
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tradepro.Logic", "tradepro.Logic\tradepro.Logic.csproj", "{659DB843-F4E6-46AB-BA02-03F2199B6DC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tradepro.API", "tradepro.API\tradepro.API.csproj", "{89CA613A-ACF4-449E-81B5-D21513727214}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tradepro.API", "tradepro.API\tradepro.API.csproj", "{89CA613A-ACF4-449E-81B5-D21513727214}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

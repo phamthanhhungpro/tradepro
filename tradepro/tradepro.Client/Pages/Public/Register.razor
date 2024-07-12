@@ -1,0 +1,70 @@
+﻿@page "/register"
+@using MudBlazor
+@using Newtonsoft.Json
+@using tradepro.Client.RestClient
+@using tradepro.Logic.Request
+@using tradepro.Logic.DTOs
+@inject NavigationManager Navigation
+@inject IRestClient RestClient
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudPaper Class="pa-4">
+        <MudText Typo="Typo.h5" Class="mb-2">Login</MudText>
+        <EditForm Model="@userRequest" OnValidSubmit="HanderRegister">
+            <MudTextField @bind-Value="userRequest.Name" Label="Full Name" Required="true" />
+            <MudTextField @bind-Value="userRequest.Address" Label="Address" Required="true" />
+            <MudTextField @bind-Value="userRequest.Phone" Label="Phone" Required="true" />
+            <MudTextField @bind-Value="userRequest.Email" Label="Email" Required="true" />
+            <MudTextField @bind-Value="userRequest.Password" Label="Password" InputType="InputType.Password" Required="true" />
+            <MudSelect @bind-Value="userRequest.RoleId"  Label="Role" Variant="Variant.Text" Required="true">
+                @foreach (var item in listRole)
+                {
+                    <MudSelectItem Value="@item.RoleId">@item.RoleName</MudSelectItem>
+                }
+            </MudSelect>
+            <MudButton Type="Button" OnClick="@((e) => HanderRegister())" Variant="Variant.Filled" Color="Color.Primary" Class="mt-2">Login</MudButton>
+        </EditForm>
+        @* @if (!string.IsNullOrEmpty(errorMessage)) *@
+       @*  {
+            <MudText Typo="Typo.body2" Color="Color.Error">@errorMessage</MudText>
+        } *@
+    </MudPaper>
+</MudContainer>
+@code {
+    private UserRequest userRequest = new UserRequest();
+    private List<RoleSelectList> listRole = new List<RoleSelectList>();
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("Listrole called");
+        var response = await RestClient.ListRole();
+        listRole = JsonConvert.DeserializeObject<List<RoleSelectList>>(await response.Content.ReadAsStringAsync());
+    }
+
+     private async Task  HanderRegister()
+    {
+        Console.WriteLine("HanderRegister called");
+        try
+        {
+            Console.WriteLine("HandleLogin called");
+            var response = await RestClient.RegisterAsync(userRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                // Parse the response then save credentail to localstore
+
+                Console.WriteLine("register successful: " + responseBody);
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+
+                Console.WriteLine("Login failed: " + response.ReasonPhrase);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred: " + ex.Message);
+        }
+    }
+}

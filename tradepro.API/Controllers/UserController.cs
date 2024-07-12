@@ -17,8 +17,8 @@ namespace tradepro.API.Controllers
             _userService = userService;
         }
 
-        [HttpGet("/list-user")] 
-        public async Task<List<User>> getListUser()
+        [HttpPost("/list-user")] 
+        public async Task<List<UserInfoDto>> getListUser( )
         {
             return await _userService.ListUser();
         }

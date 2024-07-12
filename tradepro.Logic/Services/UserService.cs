@@ -68,9 +68,20 @@ namespace tradepro.Logic.Services
             return await _context.Users.Include(x => x.Role).Where(x => x.Email.Equals(email)).FirstOrDefaultAsync();
         }
 
-        public async Task<List<User>> ListUser()
+        public async Task<List<UserInfoDto>> ListUser()
         {
-            return await _context.Users.Include(x=>x.Role).ToListAsync();
+            return await _context.Users.Where(x=>!x.Role.Code.Equals("SU")).Include(x=>x.Role).Select(x=> new UserInfoDto
+            {
+                Id=x.Id,
+                Name = x.Name,
+                Address = x.Address,
+                Phone = x.Phone,
+                Email = x.Email,
+                Role = x.Role.Name,
+
+            }).ToListAsync();
+            //.Skip((pagingRequest.PageNumber - 1) * pagingRequest.PageSize).Take(pagingRequest.PageSize)
+
         }
 
         public async Task<CudResponseDto> UpdateUser(Guid Id, UpdateUserRequest user)
