@@ -2,6 +2,7 @@
 using tradepro.Logic.Interfaces;
 using tradepro.Logic.Request;
 using Microsoft.EntityFrameworkCore;
+using tradepro.Logic.DTOs;
 namespace tradepro.Logic.Services
 {
     public class RoleService : IRoleService
@@ -25,6 +26,15 @@ namespace tradepro.Logic.Services
             _context.Roles.Add(newRole);
             _context.SaveChanges();
 
+        }
+
+        public async Task<IEnumerable<RoleSelectList>> FilterRole()
+        {
+            return await _context.Roles.Where(x=> !x.Code.Equals("SU")).Select(x=> new RoleSelectList
+            {
+                RoleId = x.Id,
+                RoleName = x.Name
+            }).ToListAsync();
         }
 
         public async Task<Role> GetRoleById(Guid Id)

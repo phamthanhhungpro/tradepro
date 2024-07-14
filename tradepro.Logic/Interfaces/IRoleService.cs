@@ -1,4 +1,5 @@
 ﻿using tradepro.InfraModel.DataAccess;
+using tradepro.Logic.DTOs;
 using tradepro.Logic.Request;
 
 namespace tradepro.Logic.Interfaces
@@ -8,5 +9,6 @@ namespace tradepro.Logic.Interfaces
         void CreateRole(RoleRequest roleRequest);
         Task<IEnumerable<Role>> GetRoles();
         Task<Role> GetRoleById(Guid Id);
+        Task<IEnumerable<RoleSelectList>> FilterRole();
     }
 }

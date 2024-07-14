@@ -16,6 +16,6 @@ namespace tradepro.InfraModel.DataAccess
         public DateTime? UpdatedAt { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
-       // public ICollection<User> Users { get; set; }
+        public ICollection<User> Users { get; set; }
     }
 }
