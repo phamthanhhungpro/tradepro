@@ -16,7 +16,7 @@ var baseAddress = builder.Configuration.GetValue<string>("ApiUrl");
 builder.Services.AddRestEaseClient<IRestClient>(baseAddress);
 
 builder.Services.AddMudServices();
-
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -41,5 +41,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Counter).Assembly);
+
+app.MapControllers();
 
 app.Run();
