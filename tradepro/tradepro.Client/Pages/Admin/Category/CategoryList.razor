@@ -36,16 +36,18 @@
 @code {
     private string searchString1 = "";
     private List<CategoryDto> Listcategory = new List<CategoryDto>();
+
     protected override async Task OnInitializedAsync()
     {
-        var response = await RestClient.GetFullListCategoryAsync();
-        Listcategory = JsonConvert.DeserializeObject<List<CategoryDto>>(await response.Content.ReadAsStringAsync());
+        await GetDataAsync();
     }
+
     private Task OpenDialogAsync()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
         return DialogService.ShowAsync<AddCategory>("Thêm Sản Phẩm", options);
     }
+
     private  async Task DeleteCategoryAsync(CategoryDto category)
     {
         var parameters = new DialogParameters<DeleteCateogory> { { x=>x.category,category} };
@@ -55,12 +57,21 @@
         {
             Snackbar.Add("Delete Success", Severity.Success);
         }
-       
-    }
-    private Task EditCategory(CategoryDto category)
-    {
-        var parameters = new DialogParameters<EditCategory> { { x => x.category, category } };
-        return DialogService.ShowAsync<EditCategory>("Sửa Sản Phẩm", parameters);
     }
 
+    private Task EditCategory(CategoryDto category)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("category", category);
+        parameters.Add("OnDialogClose", new Func<Task>(GetDataAsync));
+        return DialogService.ShowAsync<EditCategory>("Edit Category", parameters);
+    }
+
+    private async Task GetDataAsync()
+    {
+        Console.WriteLine("Get data");
+        var response = await RestClient.GetFullListCategoryAsync();
+        Listcategory = JsonConvert.DeserializeObject<List<CategoryDto>>(await response.Content.ReadAsStringAsync());
+        StateHasChanged();
+    }
 }

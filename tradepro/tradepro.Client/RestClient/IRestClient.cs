@@ -22,16 +22,14 @@ namespace tradepro.Client.RestClient
 
         [Get("/full-list-category")]
         Task<HttpResponseMessage> GetFullListCategoryAsync();
+
         [Post("/add-category")]
         Task<HttpResponseMessage> AddCategoryAsync([Body] CategoryRequest category);
+
         [Post("/delete-category")]
         Task<HttpResponseMessage> DeteleCategoryAsync (Guid id);
+
         [Post("/edit-category")]
         Task<HttpResponseMessage> EditCategory(Guid id,[Body] CategoryRequest categoryRequest);
-        
-
-        
-
-
     }
 }
