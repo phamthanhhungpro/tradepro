@@ -1,0 +1,30 @@
+﻿@using tradepro.Logic.Request
+@using tradepro.Client.RestClient
+@inject NavigationManager Navigation
+@inject IRestClient RestClient
+<MudDialog>
+    <DialogContent>
+        <MudTextField T="string" Label="Name" @bind-Value="category.CategoryName"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@((e) => CreateCategory())">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code 
+{
+        [CascadingParameter]
+        private MudDialogInstance MudDialog { get; set; }
+        private CategoryRequest category = new CategoryRequest();
+        private async Task CreateCategory()
+        {
+            var response = await RestClient.AddCategoryAsync(category);
+            MudDialog.Close(DialogResult.Ok(true));
+            Navigation.Refresh(true);
+        }
+
+        private void Cancel() => MudDialog.Cancel();
+ }
+
+

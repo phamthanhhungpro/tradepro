@@ -1,0 +1,35 @@
+﻿@using tradepro.Logic.DTOs
+@using tradepro.Client.RestClient
+@inject ISnackbar Snackbar
+@inject IRestClient RestClient
+@inject NavigationManager Navigation
+
+<TitleContent>
+        <MudText  Variant="Variant.Filled" Typo="Typo.h6">
+           @category.Name
+    </MudText>
+</TitleContent
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton  Color="Color.Error" OnClick=@((e) => DeleteCategory())>Delete Category</MudButton>
+    </DialogActions>
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public CategoryDto category { get; set; }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task DeleteCategory()
+    {
+        //In a real world scenario this bool would probably be a service to delete the item from api/database
+        var response = await RestClient.DeteleCategoryAsync(category.Id);
+        Console.WriteLine(response.Content.ToString());
+
+        MudDialog.Close(DialogResult.Ok(true));
+        Navigation.Refresh(true);
+
+
+    }
+}

@@ -1,0 +1,25 @@
+﻿@page "/category"
+@using MudBlazor
+@using Newtonsoft.Json
+@using tradepro.InfraModel.DataAccess
+@using tradepro.Client.RestClient
+@inject NavigationManager Navigation
+@inject IRestClient RestClient
+
+
+<MudMenu Label="Category">
+    @foreach(var item in Listcategory)
+    {
+        <MudMenuItem>@item.CategoryName</MudMenuItem>
+    }
+    
+
+</MudMenu>
+@code {
+    private List<tradepro.InfraModel.DataAccess.Category> Listcategory = new List<tradepro.InfraModel.DataAccess.Category>();
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await RestClient.GetListCategoryAsync();
+        Listcategory = JsonConvert.DeserializeObject<List<tradepro.InfraModel.DataAccess.Category>>(await response.Content.ReadAsStringAsync());
+    }
+}
