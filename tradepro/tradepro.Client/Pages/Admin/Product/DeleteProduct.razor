@@ -5,11 +5,11 @@
 @inject NavigationManager Navigation
 <MudDialog>
     <DialogContent>
-        <MudText>@category.Name</MudText>
+        <MudText>@product.Name</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton  Color="Color.Error" OnClick=@((e) => DeleteCategory())>Ok</MudButton>
+        <MudButton Color="Color.Error" OnClick=@((e) => DeleteCategory())>Ok</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -17,25 +17,25 @@
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; }
     [Parameter]
-    public CategoryDto category { get; set; }
-    [Parameter] 
+    public ProductDto product { get; set; }
+    [Parameter]
     public Func<Task> OnDialogClose { get; set; }
     private void Cancel() => MudDialog.Cancel();
 
     private async Task DeleteCategory()
     {
         //In a real world scenario this bool would probably be a service to delete the item from api/database
-        var response = await RestClient.DeteleCategoryAsync(category.Id);
+        var response = await RestClient.DeleteProduct(product.Id);
         await CloseDialog();
-        
+
     }
     private async Task CloseDialog()
+    {
+        if (OnDialogClose != null)
         {
-            if (OnDialogClose != null)
-            {
-                await OnDialogClose.Invoke();
-            }
-
-            MudDialog.Close();
+            await OnDialogClose.Invoke();
         }
+
+        MudDialog.Close();
+    }
 }

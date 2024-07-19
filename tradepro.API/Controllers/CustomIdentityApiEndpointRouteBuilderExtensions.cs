@@ -325,16 +325,27 @@ namespace tradepro.API.Controllers
                 });
             });
 
-            accountGroup.MapGet("/info", async Task<Results<Ok<InfoResponse>, ValidationProblem, NotFound>>
+            accountGroup.MapGet("/info", async Task<Results<Ok<UserInfoDto>, ValidationProblem, NotFound>>
                 (ClaimsPrincipal claimsPrincipal, [FromServices] IServiceProvider sp) =>
             {
                 var userManager = sp.GetRequiredService<UserManager<TUser>>();
+                var dbContext = sp.GetRequiredService<TradeproDbContext>();
                 if (await userManager.GetUserAsync(claimsPrincipal) is not { } user)
                 {
                     return TypedResults.NotFound();
                 }
+                var userModel = user as User;
+                var userDto = dbContext.Users.Select(x => new UserInfoDto()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Address = x.Address,
+                    Phone = x.Phone,
+                    Email = x.Email,
+                    Role = x.Role.Name,
+                }).FirstOrDefault(x=>x.Id == userModel.Id);
 
-                return TypedResults.Ok(await CreateInfoResponseAsync(user, userManager));
+                return TypedResults.Ok(userDto);
             });
 
             accountGroup.MapPost("/info", async Task<Results<Ok<InfoResponse>, ValidationProblem, NotFound>>

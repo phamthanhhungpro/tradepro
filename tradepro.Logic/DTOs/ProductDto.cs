@@ -7,10 +7,10 @@ using tradepro.InfraModel.DataAccess;
 
 namespace tradepro.Logic.DTOs
 {
-    public class CategoryDto
+    public class ProductDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public ICollection<Product> products { get; set; }
+        public Category Category { get; set; }
     }
 }

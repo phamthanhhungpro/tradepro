@@ -1,9 +1,14 @@
 ﻿@page "/login"
 @using MudBlazor
+@using Blazored.LocalStorage
+@using Newtonsoft.Json
 @using tradepro.Client.RestClient
 @using tradepro.Logic.Request
+@using tradepro.Logic.DTOs
+@using tradepro.Client.Common.Model
 @inject NavigationManager Navigation
 @inject IRestClient RestClient
+@inject ILocalStorageService _localstorage;
 
 <MudContainer MaxWidth="MaxWidth.Small">
     <MudPaper Class="pa-4">
@@ -23,7 +28,7 @@
 @code {
     private LoginModel loginModel = new LoginModel();
     private string errorMessage;
-
+    private LoginResult loginResult = new LoginResult();
     private async Task HandleLogin()
     {
         try
@@ -34,9 +39,16 @@
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
+                loginResult = JsonConvert.DeserializeObject<LoginResult>(await response.Content.ReadAsStringAsync());
                 // Parse the response then save credentail to localstore
+                await _localstorage.SetItemAsync("token",  loginResult.accessToken);
+                var item = await RestClient.GetUserInfoAsync();
+                var user = new UserInfoDto();
+                user = item;
+                Console.WriteLine(user.Id);
+                Console.WriteLine(user.Role);
+                Console.WriteLine(user.Name);
 
-                Console.WriteLine("Login successful: " + responseBody);
                 Navigation.NavigateTo("/");
             }
             else

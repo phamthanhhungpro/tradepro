@@ -1,43 +1,43 @@
-﻿@page "/admin/category"
+﻿@page "/admin/product"
 @using MudBlazor
 @using System.Net.Http.Json
 @using Newtonsoft.Json
 @using tradepro.Client.RestClient
 @using tradepro.Logic.DTOs
 @using tradepro.Logic.Request
+@using tradepro.Client.Common.Model
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
 @inject IRestClient RestClient
-
-
 <PageTitle>Danh sách Sản Phẩm</PageTitle>
-<MudTable Items="@Listcategory" Hover="true">
+<MudTable Items="@listProduct" Hover="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Danh sách sản phẩm</MudText>
         <MudButton @onclick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
             Thêm Sản Phẩm
         </MudButton>
-        <MudSpacer />       
+        <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Name</MudTh>
-        <MudTh>Active</MudTh>
+        <MudTh>Category</MudTh>
+        <MudTh>Action</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Category">@context.Category.CategoryName</MudTd>
         <MudTd>
-            <MudIconButton @onclick="@((e) => EditCategory(context))" Icon="@Icons.Material.Filled.Edit" aria-label="delete"></MudIconButton>
-            <MudIconButton @onclick="@((e) => DeleteCategoryAsync(context))" Icon="@Icons.Material.Filled.Delete" aria-label="delete"></MudIconButton>
-        </MudTd>       
+            <MudIconButton @onclick="@((e) => EditProduct(context))" Icon="@Icons.Material.Filled.Edit" aria-label="delete"></MudIconButton>
+            <MudIconButton @onclick="@((e) => DeleteProductAsync(context))" Icon="@Icons.Material.Filled.Delete" aria-label="delete"></MudIconButton>
+        </MudTd>
     </RowTemplate>
 
 </MudTable>
 @code {
-    private string searchString1 = "";
-    private List<CategoryDto> Listcategory = new List<CategoryDto>();
-
+    private string searchString1 = null;
+    private List<ProductDto> listProduct = new List<ProductDto>();
     protected override async Task OnInitializedAsync()
     {
         await GetDataAsync();
@@ -48,30 +48,35 @@
         var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
         parameters.Add("OnDialogClose", new Func<Task>(GetDataAsync));
-        return DialogService.ShowAsync<AddCategory>("Thêm Sản Phẩm", parameters,options);
+        return DialogService.ShowAsync<AddProduct>("Thêm Sản Phẩm", parameters, options);
     }
 
-    private Task DeleteCategoryAsync(CategoryDto category)
+    private Task DeleteProductAsync(ProductDto product)
     {
         var parameters = new DialogParameters();
-        parameters.Add("category", category);
+        parameters.Add("product", product);
         parameters.Add("OnDialogClose", new Func<Task>(GetDataAsync));
-        return DialogService.ShowAsync<DeleteCateogory>("Delete Category", parameters);
+        return DialogService.ShowAsync<DeleteProduct>("Delete Product", parameters);
     }
 
-    private Task EditCategory(CategoryDto category)
+    private Task EditProduct(ProductDto product)
     {
+        var item = new CategoryList()
+        {
+            Id=product.Category.Id,
+            Name=product.Category.CategoryName
+        };
         var parameters = new DialogParameters();
-        parameters.Add("category", category);
+        parameters.Add("product", product);
+        parameters.Add("categoryItem", item);
         parameters.Add("OnDialogClose", new Func<Task>(GetDataAsync));
-        return DialogService.ShowAsync<EditCategory>("Edit Category", parameters);
+        return DialogService.ShowAsync<EditProduct>("Edit Product", parameters);
     }
 
     private async Task GetDataAsync()
     {
         Console.WriteLine("Get data");
-        var response = await RestClient.GetFullListCategoryAsync();
-        Listcategory = JsonConvert.DeserializeObject<List<CategoryDto>>(await response.Content.ReadAsStringAsync());
+        listProduct = await RestClient.GetListProductAsync();
         StateHasChanged();
     }
 }

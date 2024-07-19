@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using tradepro.InfraModel.DataAccess;
@@ -11,9 +12,11 @@ using tradepro.InfraModel.DataAccess;
 namespace tradepro.InfraModel.Migrations
 {
     [DbContext(typeof(TradeproDbContext))]
-    partial class TradeproDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240717081722_cfrela")]
+    partial class cfrela
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -254,16 +257,31 @@ namespace tradepro.InfraModel.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Stores");
+                });
+
+            modelBuilder.Entity("tradepro.InfraModel.DataAccess.StoreProduct", b =>
+                {
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UeserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("StoreId", "UeserId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UeserId");
+
+                    b.ToTable("StoreProducts");
                 });
 
             modelBuilder.Entity("tradepro.InfraModel.DataAccess.User", b =>
@@ -426,14 +444,31 @@ namespace tradepro.InfraModel.Migrations
             modelBuilder.Entity("tradepro.InfraModel.DataAccess.Store", b =>
                 {
                     b.HasOne("tradepro.InfraModel.DataAccess.Product", "Product")
-                        .WithMany("Stores")
+                        .WithMany()
                         .HasForeignKey("ProductId");
 
-                    b.HasOne("tradepro.InfraModel.DataAccess.User", "User")
-                        .WithMany("Stores")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("tradepro.InfraModel.DataAccess.StoreProduct", b =>
+                {
+                    b.HasOne("tradepro.InfraModel.DataAccess.Product", null)
+                        .WithMany("storeProducts")
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("tradepro.InfraModel.DataAccess.Store", "Store")
+                        .WithMany("StoreProduct")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("tradepro.InfraModel.DataAccess.User", "User")
+                        .WithMany("storeProducts")
+                        .HasForeignKey("UeserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Store");
 
                     b.Navigation("User");
                 });
@@ -454,7 +489,7 @@ namespace tradepro.InfraModel.Migrations
 
             modelBuilder.Entity("tradepro.InfraModel.DataAccess.Product", b =>
                 {
-                    b.Navigation("Stores");
+                    b.Navigation("storeProducts");
                 });
 
             modelBuilder.Entity("tradepro.InfraModel.DataAccess.Role", b =>
@@ -462,9 +497,14 @@ namespace tradepro.InfraModel.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("tradepro.InfraModel.DataAccess.Store", b =>
+                {
+                    b.Navigation("StoreProduct");
+                });
+
             modelBuilder.Entity("tradepro.InfraModel.DataAccess.User", b =>
                 {
-                    b.Navigation("Stores");
+                    b.Navigation("storeProducts");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using tradepro.InfraModel.DataAccess;
@@ -11,9 +12,11 @@ using tradepro.InfraModel.DataAccess;
 namespace tradepro.InfraModel.Migrations
 {
     [DbContext(typeof(TradeproDbContext))]
-    partial class TradeproDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240716123706_product")]
+    partial class product
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,45 +230,6 @@ namespace tradepro.InfraModel.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("tradepro.InfraModel.DataAccess.Store", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Stores");
-                });
-
             modelBuilder.Entity("tradepro.InfraModel.DataAccess.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -423,21 +387,6 @@ namespace tradepro.InfraModel.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("tradepro.InfraModel.DataAccess.Store", b =>
-                {
-                    b.HasOne("tradepro.InfraModel.DataAccess.Product", "Product")
-                        .WithMany("Stores")
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("tradepro.InfraModel.DataAccess.User", "User")
-                        .WithMany("Stores")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("tradepro.InfraModel.DataAccess.User", b =>
                 {
                     b.HasOne("tradepro.InfraModel.DataAccess.Role", "Role")
@@ -452,19 +401,9 @@ namespace tradepro.InfraModel.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("tradepro.InfraModel.DataAccess.Product", b =>
-                {
-                    b.Navigation("Stores");
-                });
-
             modelBuilder.Entity("tradepro.InfraModel.DataAccess.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("tradepro.InfraModel.DataAccess.User", b =>
-                {
-                    b.Navigation("Stores");
                 });
 #pragma warning restore 612, 618
         }

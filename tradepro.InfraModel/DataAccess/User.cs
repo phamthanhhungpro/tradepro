@@ -15,6 +15,7 @@ namespace tradepro.InfraModel.DataAccess
         public string Password { get; set; }
         public bool IsActive { get; set; }
         public Role Role { get; set; }
+        public ICollection<Store> Stores { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool IsDeleted { get; set; }

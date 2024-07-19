@@ -73,6 +73,7 @@ namespace tradepro.Logic.Services
             {
                 Id=x.Id,
                 Name = x.CategoryName,
+                products = x.Products
             }).ToListAsync();
         }
 
