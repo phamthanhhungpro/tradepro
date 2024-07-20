@@ -19,7 +19,7 @@
     private List<tradepro.InfraModel.DataAccess.Category> Listcategory = new List<tradepro.InfraModel.DataAccess.Category>();
     protected override async Task OnInitializedAsync()
     {
-        var response = await RestClient.GetListCategoryAsync();
-        Listcategory = JsonConvert.DeserializeObject<List<tradepro.InfraModel.DataAccess.Category>>(await response.Content.ReadAsStringAsync());
+        Listcategory = await RestClient.GetListCategoryAsync();
+       // Listcategory = JsonConvert.DeserializeObject<List<tradepro.InfraModel.DataAccess.Category>>(await response.Content.ReadAsStringAsync());
     }
 }

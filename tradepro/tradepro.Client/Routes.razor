@@ -19,6 +19,10 @@
         {
             return typeof(Layout.MainLayout);
         }
+        if (uri.StartsWith("seller"))
+        {
+            return typeof(Layout.SellerLayout);
+        }
         return typeof(Layout.PublicLayout); // Change this to your default layout
     }
 }

@@ -14,17 +14,26 @@
 
 @code 
 {
-        [CascadingParameter]
-        private MudDialogInstance MudDialog { get; set; }
-        private CategoryRequest category = new CategoryRequest();
-        private async Task CreateCategory()
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    [Parameter] 
+    public Func<Task> OnDialogClose { get; set; }
+    private CategoryRequest category = new CategoryRequest();
+    private async Task CreateCategory()
+    {
+        var response = await RestClient.AddCategoryAsync(category);
+        await CloseDialog();
+    }
+    private async Task CloseDialog()
+    {
+        if (OnDialogClose != null)
         {
-            var response = await RestClient.AddCategoryAsync(category);
-            MudDialog.Close(DialogResult.Ok(true));
-            Navigation.Refresh(true);
+            await OnDialogClose.Invoke();
         }
+        MudDialog.Close();
+    }
 
-        private void Cancel() => MudDialog.Cancel();
+    private void Cancel() => MudDialog.Cancel();
  }
 
 

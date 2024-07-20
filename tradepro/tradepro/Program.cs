@@ -4,6 +4,7 @@ using tradepro.Client.Pages.Public;
 using tradepro.Components;
 using RestEase.HttpClientFactory;
 using tradepro.Client.RestClient;
+using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +15,10 @@ builder.Services.AddRazorComponents()
 
 var baseAddress = builder.Configuration.GetValue<string>("ApiUrl");
 builder.Services.AddRestEaseClient<IRestClient>(baseAddress);
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddMudServices();
 builder.Services.AddControllers();
-
+builder.Services.AddBlazoredLocalStorage();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,0 +1,72 @@
+﻿@using tradepro.Client.Common.Model
+@using tradepro.Logic.Request
+@using tradepro.Client.RestClient
+@using tradepro.Client.Common
+@inject NavigationManager Navigation
+@inject IRestClient RestClient
+<MudDialog>
+    <DialogContent>
+        <MudTextField T="string" Label="Tên sản phẩm" @bind-Value="product.ProductName"></MudTextField>
+        <MudSelect @bind-Value="categoryItem" Margin="Margin.Dense" T="CategoryList" Label="Loại">
+            @foreach (var item in categorieslist)
+            {
+                <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+            }
+        </MudSelect>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@((e) => CreateProduct())">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public Func<Task> OnDialogClose { get; set; }
+
+    public CategoryList categoryItem = new CategoryList();
+    private ProductRequest product = new ProductRequest();
+    private List<CategoryList> categorieslist = new List<CategoryList>();
+
+    protected override async Task OnInitializedAsync()
+    {
+          await ListCategory();
+        // hashCategoryList = new HashSet<CategoryList>(categorieslist.Select(x => new CategoryList()
+        // {
+        //     Id= x.Id,
+        //     Name = x.CategoryName,
+        // }));
+    }
+
+    private async Task ListCategory()
+    {
+        var response = await RestClient.GetListCategoryAsync();
+        categorieslist = response.Select(x => new CategoryList()
+            {
+                Id = x.Id,
+                Name = x.CategoryName,
+            }).ToList();
+    }
+    private async Task CreateProduct()
+    {
+        product.CategoryId = categoryItem.Id;
+        var response = await RestClient.AddProductAsync(product);
+        await CloseDialog();
+    }
+    private async Task CloseDialog()
+    {
+        if (OnDialogClose != null)
+        {
+            await OnDialogClose.Invoke();
+        }
+        MudDialog.Close();
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}
+
+
