@@ -1,35 +1,36 @@
-﻿using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-namespace tradepro.Client.CustomHandler
+﻿using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Blazored.LocalStorage;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+
+public class AuthHandler : DelegatingHandler
 {
-    public class CustomAuthorizationMessageHandler : DelegatingHandler
+    private readonly IServiceProvider _serviceProvider;
+
+    public AuthHandler(IServiceProvider serviceProvider)
     {
-        private readonly IAccessTokenProvider _tokenProvider;
-        private readonly ILocalStorageService _localStorage;
-        private readonly NavigationManager _navigationManager;
+        _serviceProvider = serviceProvider;
+    }
 
-        public CustomAuthorizationMessageHandler(IAccessTokenProvider tokenProvider, ILocalStorageService localStorageService, NavigationManager navigationManager)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        // Ensure JavaScript interop is available
+        if (_serviceProvider.GetService<IJSRuntime>() is not null)
         {
-            _tokenProvider = tokenProvider;
-            _localStorage = localStorageService;
-            _navigationManager = navigationManager;
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var localStorageService = scope.ServiceProvider.GetRequiredService<ILocalStorageService>();
+                var token = await localStorageService.GetItemAsync<string>("token");
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+                }
+            }
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            var accessTokenResult = await _localStorage.GetItemAsStringAsync("token");
-            if (accessTokenResult == null)
-            {
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessTokenResult);
-            }
-            else
-            {
-                // Handle token not available case, e.g., redirect to login
-                _navigationManager.NavigateTo("/login");
-            }
-
-            return await base.SendAsync(request, cancellationToken);
-        }
+        return await base.SendAsync(request, cancellationToken);
     }
 }

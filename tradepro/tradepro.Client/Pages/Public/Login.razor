@@ -40,14 +40,18 @@
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
                 loginResult = JsonConvert.DeserializeObject<LoginResult>(await response.Content.ReadAsStringAsync());
-                // Parse the response then save credentail to localstore
-                await _localstorage.SetItemAsync("token",  loginResult.accessToken);
+                // // Parse the response then save credentail to localstore
+
+                var token = loginResult.accessToken.Replace("\"", "");
+                await _localstorage.SetItemAsync("token", loginResult.accessToken.Replace("\"", ""));
+                await _localstorage.SetItemAsync("expiredIn", loginResult.expiresIn);
+
                 var item = await RestClient.GetUserInfoAsync();
-                var user = new UserInfoDto();
-                user = item;
-                Console.WriteLine(user.Id);
-                Console.WriteLine(user.Role);
-                Console.WriteLine(user.Name);
+                // var user = new UserInfoDto();
+                // user = item;
+                // Console.WriteLine(user.Id);
+                // Console.WriteLine(user.Role);
+                // Console.WriteLine(user.Name);
 
                 Navigation.NavigateTo("/");
             }
@@ -60,7 +64,8 @@
         catch (Exception ex)
         {
             errorMessage = $"An error occurred: {ex.Message}";
-            Console.WriteLine("An error occurred: " + ex.Message);
+            // Reload the page
+            Navigation.NavigateTo("/login", forceLoad: true);
         }
     }
 }

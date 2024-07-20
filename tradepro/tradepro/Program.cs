@@ -13,12 +13,18 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddApiAuthorization();
+
 var baseAddress = builder.Configuration.GetValue<string>("ApiUrl");
-builder.Services.AddRestEaseClient<IRestClient>(baseAddress);
+// Register HttpClient with custom message handler
+builder.Services.AddMyApi(baseAddress);
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMudServices();
 builder.Services.AddControllers();
-builder.Services.AddBlazoredLocalStorage();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

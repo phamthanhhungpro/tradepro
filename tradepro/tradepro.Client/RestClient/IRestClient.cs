@@ -53,4 +53,25 @@ namespace tradepro.Client.RestClient
         Task<CudResponseDto> DeleteProduct (Guid id);
 
     }
+
+    public static class ServiceCollectionExtensions
+    {
+        public static IServiceCollection AddMyApi(this IServiceCollection services, string baseUrl)
+        {
+            services.AddTransient<AuthHandler>();
+
+            services.AddHttpClient("MyApiClient")
+                .AddHttpMessageHandler<AuthHandler>()
+                .ConfigureHttpClient(client => client.BaseAddress = new Uri(baseUrl));
+
+            services.AddSingleton<IRestClient>(sp =>
+            {
+                var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
+                var httpClient = clientFactory.CreateClient("MyApiClient");
+                return RestEase.RestClient.For<IRestClient>(httpClient);
+            });
+
+            return services;
+        }
+    }
 }
