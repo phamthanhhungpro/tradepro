@@ -1,6 +1,68 @@
 ﻿@page "/seller/store"
-<h3>Store</h3>
+@using MudBlazor
+@using System.Net.Http.Json
+@using Newtonsoft.Json
+@using tradepro.Client.RestClient
+@using tradepro.Logic.DTOs
+@using tradepro.Logic.Request
+@inject NavigationManager Navigation
+@inject IRestClient RestClient
+@inject IDialogService DialogService
+<PageTitle>Danh sách người dùng</PageTitle>
+<MudTable Items="@listStore" Hover="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Danh sách Store</MudText>
+        <MudSpacer />
+        <MudButton @onclick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
+            Thêm Gian Hàng 
+        </MudButton>
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Address</MudTh>
+        <MudTh>Phone Number</MudTh>
+
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr"><MudLink @onclick="@((e) => NavigationTozz(context.Id.ToString()))" >@context.Name</MudLink></MudTd>
+        <MudTd DataLabel="Sign">@context.Description</MudTd>
+        <MudTd DataLabel="Name">@context.CreateBy</MudTd>
+
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
 
 @code {
+    private string searchString1 = "";
+    private PagingRequest pagingRequest = new PagingRequest();
+    private List<StoreInfoDto> listStore = new List<StoreInfoDto>();
+    protected override async Task OnInitializedAsync()
+    {
+        await GetDataAsync();
+
+    }
+
+    private Task OpenDialogAsync()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add("OnDialogClose", new Func<Task>(GetDataAsync));
+        return DialogService.ShowAsync<AddStore>("Thêm Gian Hàng", parameters, options);
+    }
+    private async Task NavigationTozz(string Id)
+    {
+         Navigation.NavigateTo("/seller/store/productstore/" + Id);
+    }
+
+
+    private async Task GetDataAsync()
+    {
+        listStore = await RestClient.GetStoreInfoAsync();
+        StateHasChanged();
+    }
 
 }
+

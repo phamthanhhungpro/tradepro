@@ -48,6 +48,7 @@ namespace tradepro.Logic.Services
                 .Where(x=>x.IsDeleted == false)
                 .Select(x=> new StoreInfoDto()
                 {
+                    Id =x.Id,
                     Name = x.Name,
                     Description= x.Description,
                     CreateBy = x.User.Email,

@@ -52,6 +52,16 @@ namespace tradepro.Client.RestClient
         [Post("/delete-product")]
         Task<CudResponseDto> DeleteProduct (Guid id);
 
+        //store 
+        [Get("/list-store")]
+        Task<List<StoreInfoDto>> GetStoreInfoAsync();
+        [Post("/add-store")]
+        Task<CudResponseDto> CreateStore([Body]StoreRequest store);
+
+        //product store
+        [Get("/list-productstore")]
+        Task<List<ProdducStoreDto>> ListProductStore(Guid id);
+        
     }
 
     public static class ServiceCollectionExtensions

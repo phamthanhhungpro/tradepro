@@ -1,0 +1,22 @@
+﻿@page "/seller/store/productstore/{id}"
+@using tradepro.Client.RestClient
+@using tradepro.Logic.DTOs
+@inject IRestClient RestClient
+
+@if(productStoreDtos.Count() == 0)
+{
+    <h3>Bạn chưa có sản phẩm nào để bán</h3>
+    <MudLink Href="#" Typo="Typo.body2">Thêm Sản Phẩm</MudLink>
+
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    public List<ProdducStoreDto> productStoreDtos = new List<ProdducStoreDto>();
+    protected override async Task OnInitializedAsync()
+    {
+        productStoreDtos = await RestClient.ListProductStore(new Guid(id));
+        Console.WriteLine(productStoreDtos.Count());
+    }
+}

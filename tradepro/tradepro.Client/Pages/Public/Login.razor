@@ -47,8 +47,10 @@
                 await _localstorage.SetItemAsync("expiredIn", loginResult.expiresIn);
 
                 var item = await RestClient.GetUserInfoAsync();
-                // var user = new UserInfoDto();
-                // user = item;
+
+                 var user = new UserInfoDto();
+                 user = item;
+                await _localstorage.SetItemAsync("UserID", user.Id);
                 // Console.WriteLine(user.Id);
                 // Console.WriteLine(user.Role);
                 // Console.WriteLine(user.Name);
@@ -57,7 +59,7 @@
             }
             else
             {
-                errorMessage = "Invalid login attempt.";
+                errorMessage = "Invalid login attempt."; 
                 Console.WriteLine("Login failed: " + response.ReasonPhrase);
             }
         }
