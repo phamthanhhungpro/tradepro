@@ -1,0 +1,49 @@
+﻿@using Blazored.LocalStorage
+@using Newtonsoft.Json
+@using tradepro.Client.Common.Model
+@using tradepro.Client.RestClient
+@using tradepro.Logic.Request
+@inject ILocalStorageService _localstorage;
+@inject IRestClient RestClient
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField T="string" Label="Tên sản phẩm" @bind-Value="productStoreRequest.Name"></MudTextField>
+        <MudTextField T="decimal" Label="Giá cả" @bind-Value="productStoreRequest.Price"></MudTextField>
+        <MudTextField T="int" Label="Số lượng" @bind-Value="productStoreRequest.Quantity"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@((e) => CreateStoreProduct())">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public Func<Task> OnDialogClose { get; set; }
+    [Parameter]
+    public Guid Id { get; set; }
+    private ProductStoreRequest productStoreRequest = new ProductStoreRequest();
+    protected override async Task OnInitializedAsync()
+    {
+
+
+    }
+    private async Task CreateStoreProduct()
+    {
+        productStoreRequest.IdStore = Id;
+       
+    }
+    private async Task CloseDialog()
+    {
+        if (OnDialogClose != null)
+        {
+            await OnDialogClose.Invoke();
+        }
+        MudDialog.Close();
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

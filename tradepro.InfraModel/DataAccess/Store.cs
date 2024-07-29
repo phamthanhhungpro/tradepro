@@ -12,5 +12,6 @@ namespace tradepro.InfraModel.DataAccess
         public string Description { get; set; }
         public User User { get; set; }
         public Product Product { get; set; }
+        public IEnumerable<ProductStore> productStores { get; set; }
     }
 }

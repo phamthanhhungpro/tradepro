@@ -8,6 +8,7 @@ namespace tradepro.Logic.DTOs
 {
     public class StoreInfoDto
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string CreateBy { get; set; }

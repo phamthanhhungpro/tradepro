@@ -1,0 +1,62 @@
+﻿@using Blazored.LocalStorage
+@using Newtonsoft.Json
+@using tradepro.Client.Common.Model
+@using tradepro.Client.RestClient
+@using tradepro.Logic.Request
+@inject ILocalStorageService _localstorage;
+@inject IRestClient RestClient
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField T="string" Label="Tên sản phẩm" @bind-Value="store.StoreName"></MudTextField>
+        <MudTextField T="string" Label="Mô Tả" @bind-Value="store.Description"></MudTextField>
+        <MudSelect @bind-Value="product" Margin="Margin.Dense" T="ProductList" Label="Loại">
+            @foreach (var item in productLists)
+            {
+                <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@((e) => CreateStore())">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public Func<Task> OnDialogClose { get; set; }
+    private List<ProductList> productLists = new List<ProductList>();
+    private ProductList product = new ProductList();
+    private StoreRequest store = new StoreRequest();
+    protected override async Task OnInitializedAsync()
+    {
+
+        var response = await RestClient.GetListProductAsync();
+        productLists = response.Select(x => new ProductList()
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
+
+    }
+    private async Task CreateStore()
+    {
+        store.UserId = await _localstorage.GetItemAsync<Guid>("UserID");
+        store.ProductId = product.Id;
+        var response = await RestClient.CreateStore(store);
+        await CloseDialog();
+    }
+    private async Task CloseDialog()
+    {
+        if (OnDialogClose != null)
+        {
+            await OnDialogClose.Invoke();
+        }
+        MudDialog.Close();
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}
